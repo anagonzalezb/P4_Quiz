@@ -39,7 +39,7 @@ exports.listCmd = (socket,rl) =>{
 *convierte el parametro en un numero entero
 * si todo va bien, la promesa se satisface y devuelve el valor de id a usar.
 **/
-const validateId =(socket, id) =>{
+const validateId =( id) =>{
   return new Sequelize.Promise((resolve,reject)=>{
     if (typeof id === "undefined"){
       reject(new Error(`Falta el parametro <id>.`));
@@ -55,7 +55,7 @@ const validateId =(socket, id) =>{
 };
 
 exports.showCmd = (socket,rl, id) => {
-  validateId(id,socket) //esto me devuelve una promesa
+  validateId(id) //esto me devuelve una promesa
   .then(id => models.quiz.findById(id))
   .then(quiz => {
     if (!quiz){
@@ -125,7 +125,7 @@ exports.deleteCmd =(socket,rl,id)=>{
   });
 };
 exports.editCmd =(socket,rl, id)=>{
-  validateId(id,socket)
+  validateId(id)
   .then(id => models.quiz.findById(id))
   .then(quiz => {
     if(!quiz){
@@ -152,7 +152,7 @@ exports.editCmd =(socket,rl, id)=>{
   })
   .catch(Sequelize.ValidationError, error => {
     errorlog(socket,'El quiz es erroneo:');
-    error.errors.forEach(({message}) => errorlog(message));
+    error.errors.forEach(({message}) => errorlog(socket,message));
   })
   .catch(error => {
     errorlog(socket,error.message);
@@ -166,7 +166,7 @@ exports.editCmd =(socket,rl, id)=>{
 
 
 exports.testCmd = (socket,rl, id) => {
-     validateId(socket,id)
+     validateId(id)
            .then(id => models.quiz.findById(id))
            .then(quiz => {
                 if(!quiz){
@@ -246,9 +246,9 @@ exports.playCmd = (socket,rl) => {
   		})
 };
 exports.creditsCmd = (socket,rl) => {
-      log('Autores de la práctica:', 'magenta');
-      log('anagonzalezb', 'magenta');
-      log('albadelgadof', 'magenta');
+      log(socket,'Autores de la práctica:', 'magenta');
+      log(socket,'anagonzalezb', 'magenta');
+      log(socket,'albadelgadof', 'magenta');
       rl.prompt();
 };
 
